@@ -17,12 +17,19 @@ const taoBaiViet = async (req, res) => {
             ThanhPho,
             Quan,
             Phuong,
+
             DiaChi,
+            
             MoTa,
+            
             GiaBan,
+            
             DienTich,
+            
             Huong,
+            
             TrangThai: 1,
+            
             userId: req.user.id,
         });
 
