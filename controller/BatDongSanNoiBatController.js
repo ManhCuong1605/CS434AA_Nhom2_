@@ -11,6 +11,8 @@ exports.getBatDongSanNoiBat = async (req, res) => {
                     model: LichHen,
                     attributes: []
                 }
+
+
             ],
             attributes: [
                 "id",
@@ -20,6 +22,9 @@ exports.getBatDongSanNoiBat = async (req, res) => {
             order: [[Sequelize.literal("soLanDatLich"), "DESC"]],
             limit: 8,
             subQuery: false
+
+
+            
         });
 
         const ids = topNhaDat.map(n => n.id);

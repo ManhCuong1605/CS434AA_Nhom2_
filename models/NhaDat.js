@@ -6,6 +6,7 @@ const NhaDat = sequelize.define("NhaDat", {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         primaryKey: true,
+
     },
     MaNhaDat: {
         type: DataTypes.STRING(10),
@@ -14,6 +15,7 @@ const NhaDat = sequelize.define("NhaDat", {
     TenNhaDat: {
         type: DataTypes.STRING(255),
         allowNull: false,
+        
     },
     // Gộp địa chỉ vào chung model
     ThanhPho: DataTypes.STRING(30),
