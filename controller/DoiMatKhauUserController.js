@@ -9,7 +9,7 @@ exports.changePassword = async (req, res) => {
 
         if (!user) return res.status(404).json({ message: "Người dùng không tồn tại" });
 
-        // Kiểm tra mật khẩu cũ
+        // Kiểm tra mật khẩu cũ ...
         const isMatch = await bcrypt.compare(currentPassword, user.password);
         if (!isMatch) {
             return res.status(400).json({ message: 'Mật khẩu hiện tại không đúng' });
@@ -21,7 +21,7 @@ exports.changePassword = async (req, res) => {
             return res.status(400).json({ message: 'Mật khẩu mới không được trùng với mật khẩu cũ' });
         }
 
-        //Hash và lưu mới
+        //Hash và lưu mới dữ liệu 
         user.password = await bcrypt.hash(newPassword, 10);
         await user.save();
 

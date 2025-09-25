@@ -9,14 +9,14 @@ const RefreshToken = require("../models/RefreshToken");
 
 const KhachHang = require("../models/KhachHang");
 const ms = require("ms");
-
+///jjjk
 const bcrypt = require("bcrypt");
 const refreshTokenExpiresInMs = ms(process.env.JWT_REFRESH_EXPIRES); // "7d" => 604800000
 const MAX_TOKENS = parseInt(process.env.MAX_REFRESH_TOKENS_PER_USER) || 5;
 
 const { OAuth2Client } = require("google-auth-library");
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
-
+//hbebkjesb
 exports.login = async (req, res) => {
     try {
         const { username, password } = req.body;
