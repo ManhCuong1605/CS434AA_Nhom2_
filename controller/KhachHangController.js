@@ -4,18 +4,7 @@ const VaiTro = require("../models/VaiTro");
 const UserVaiTro = require("../models/User_VaiTro");
 
 const bcrypt = require("bcrypt");
-exports.getAllKhachHang = async (req, res) => {
-    try {
-        const khachHang = await KhachHang.findAll({
-            include: [{
-                model: User
-            }]
-        });
-        res.json(khachHang);
-    } catch (error) {
-        res.status(500).json({ error: "Lỗi khi lấy khách hàng" });
-    }
-};
+
 
 exports.getKhachHangById = async (req, res) => {
     try {

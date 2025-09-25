@@ -17,30 +17,7 @@ const MAX_TOKENS = parseInt(process.env.MAX_REFRESH_TOKENS_PER_USER) || 5;
 const { OAuth2Client } = require("google-auth-library");
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
-exports.login = async (req, res) => {
-    try {
-        const { username, password } = req.body;
-        if (!username || !password) {
-            return res.status(400).json({ error: "Thiếu username hoặc password!" });
-        }
 
-        // Kiểm tra user có tồn tại không
-        const user = await User.findOne({ where: { username } });
-        if (!user) {
-            return res.status(400).json({ error: "Tài khoản hoặc mật khẩu không đúng!" });
-        }
-
-        // Kiểm tra mật khẩu
-        const isPasswordValid = await bcrypt.compare(password, user.password);
-        if (!isPasswordValid) {
-            return res.status(400).json({ error: "Tài khoản hoặc mật khẩu không đúng!" });
-        }
-
-        // Lấy danh sách vai trò của user
-        const userRoles = await UserVaiTro.findAll({
-            where: { User_id: user.id },
-            include: [{ model: VaiTro, attributes: ["MaVaiTro"] }],
-        });
 
         // Chuyển danh sách vai trò thành mảng
         const roles = userRoles.map(ur => ur.VaiTro.MaVaiTro);
