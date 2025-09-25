@@ -8,6 +8,20 @@ exports.list = async (req, res) => {
       return res.status(400).json({ message: "Không tìm thấy ID người dùng từ token" });
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     const favorites = await DanhMucYeuThich.findAll({
       where: { UserId: userId },
       include: [
@@ -20,6 +34,20 @@ exports.list = async (req, res) => {
               as: "hinhAnh",
               attributes: ["id", "url"],
             },
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
           ],
         },
       ],
@@ -31,6 +59,43 @@ exports.list = async (req, res) => {
     res.status(500).json({ message: "Lỗi server", error: error.message });
   }
 };
+
+
+// Xóa khỏi danh sách yêu thích
+exports.remove = async (req, res) => {
+  try {
+    const userId = req.user?.id;
+    const nhaDatId = req.params.id;
+
+    if (!userId) {
+      return res.status(400).json({ message: "Không tìm thấy ID người dùng" });
+    }
+
+    const deleted = await DanhMucYeuThich.destroy({
+      where: { UserId: userId, NhaDatId: nhaDatId },
+    });
+
+    if (!deleted) {
+      return res.status(404).json({ message: "Không tìm thấy mục yêu thích để xóa" });
+    }
+
+    res.json({ message: "Đã xóa khỏi danh sách yêu thích", NhaDatId: nhaDatId });
+  } catch (error) {
+    console.error("Lỗi khi xóa danh mục yêu thích:", error);
+    res.status(500).json({ message: "Lỗi server", error: error.message });
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
 
 // Thêm vào danh sách yêu thích
 exports.add = async (req, res) => {
@@ -64,30 +129,5 @@ exports.add = async (req, res) => {
   } catch (error) {
     console.error("Lỗi khi thêm danh mục yêu thích:", error);
     res.status(500).json({ message: "Không thể thêm vào danh mục yêu thích", error: error.message });
-  }
-};
-
-// Xóa khỏi danh sách yêu thích
-exports.remove = async (req, res) => {
-  try {
-    const userId = req.user?.id;
-    const nhaDatId = req.params.id;
-
-    if (!userId) {
-      return res.status(400).json({ message: "Không tìm thấy ID người dùng" });
-    }
-
-    const deleted = await DanhMucYeuThich.destroy({
-      where: { UserId: userId, NhaDatId: nhaDatId },
-    });
-
-    if (!deleted) {
-      return res.status(404).json({ message: "Không tìm thấy mục yêu thích để xóa" });
-    }
-
-    res.json({ message: "Đã xóa khỏi danh sách yêu thích", NhaDatId: nhaDatId });
-  } catch (error) {
-    console.error("Lỗi khi xóa danh mục yêu thích:", error);
-    res.status(500).json({ message: "Lỗi server", error: error.message });
   }
 };

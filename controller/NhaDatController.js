@@ -11,6 +11,7 @@ exports.getAllNhaDat = async (req, res) => {
         res.json(nhaDat);
     } catch (error) {
         console.error("Lỗi:", error);
+
         res.status(500).json({ error: "Lỗi khi lấy danh sách nhà đất" });
     }
 };
@@ -27,6 +28,7 @@ exports.getNhaDatById = async (req, res) => {
                         attributes: ['id', 'TenLoaiDat']
                     },
                     {
+
                         model: HinhAnhNhaDat,
                         as: 'hinhAnh',
                         attributes: ['url']
@@ -43,6 +45,29 @@ exports.getNhaDatById = async (req, res) => {
         res.status(500).json({ error: "Lỗi khi lấy nhà đất" });
     }
 };
+
+
+
+
+ // Tạo nhà đất mới
+        const newNhaDat = await NhaDat.create({
+            MaNhaDat,
+            TenNhaDat,
+            ThanhPho,
+            Quan,
+            Phuong,
+            Duong,
+            SoNha,
+            MoTa,
+            GiaBan,
+            DienTich,
+            Huong,
+            TrangThai: 1,
+            LoaiNhaDat_id
+        });
+
+
+
 
 exports.addNhaDat = async (req, res) => {
     try {
@@ -73,22 +98,7 @@ exports.addNhaDat = async (req, res) => {
             return res.status(400).json({ message: "Mã nhà đất đã tồn tại" });
         }
 
-        // Tạo nhà đất mới
-        const newNhaDat = await NhaDat.create({
-            MaNhaDat,
-            TenNhaDat,
-            ThanhPho,
-            Quan,
-            Phuong,
-            Duong,
-            SoNha,
-            MoTa,
-            GiaBan,
-            DienTich,
-            Huong,
-            TrangThai: 1,
-            LoaiNhaDat_id
-        });
+       
 
         // Lưu ảnh vào bảng HinhAnhNhaDat
         if (req.files && req.files.length > 0) {
@@ -118,6 +128,30 @@ exports.addNhaDat = async (req, res) => {
 };
 
 
+exports.deleteNhaDat = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const nhaDat = await NhaDat.findByPk(id, {
+            include: {
+                model: HinhAnhNhaDat,
+                as: "hinhAnh"
+            }
+        });
+        if (!nhaDat) return res.status(404).json({ error: "Không tìm thấy nhà đất" });
+        const hinhAnhList = nhaDat.hinhAnh;
+        for (let hinhAnh of hinhAnhList) {
+            const publicId = hinhAnh.url.split('/').pop().split('.')[0];
+            await cloudinary.uploader.destroy(publicId);
+        }
+        await nhaDat.destroy();
+
+        return res.status(200).json({ message: "Xóa nhà đất thành công" });
+    } catch (error) {
+        console.error("Lỗi khi xóa nhà đất:", error);
+        return res.status(500).json({ error: "Lỗi máy chủ" });
+    }
+};
+
 exports.updateNhaDat = async (req, res) => {
     try {
         const { id } = req.params;
@@ -138,6 +172,9 @@ exports.updateNhaDat = async (req, res) => {
                 return res.status(400).json({ error: "Mã nhà đất đã tồn tại" });
             }
         }
+
+
+        
 
         if (req.files && req.files.length > 0) {
             // Xoá ảnh cũ
@@ -166,29 +203,6 @@ exports.updateNhaDat = async (req, res) => {
         });
     } catch (error) {
         console.error("Lỗi khi cập nhật nhà đất:", error);
-        return res.status(500).json({ error: "Lỗi máy chủ" });
-    }
-};
-exports.deleteNhaDat = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const nhaDat = await NhaDat.findByPk(id, {
-            include: {
-                model: HinhAnhNhaDat,
-                as: "hinhAnh"
-            }
-        });
-        if (!nhaDat) return res.status(404).json({ error: "Không tìm thấy nhà đất" });
-        const hinhAnhList = nhaDat.hinhAnh;
-        for (let hinhAnh of hinhAnhList) {
-            const publicId = hinhAnh.url.split('/').pop().split('.')[0];
-            await cloudinary.uploader.destroy(publicId);
-        }
-        await nhaDat.destroy();
-
-        return res.status(200).json({ message: "Xóa nhà đất thành công" });
-    } catch (error) {
-        console.error("Lỗi khi xóa nhà đất:", error);
         return res.status(500).json({ error: "Lỗi máy chủ" });
     }
 };

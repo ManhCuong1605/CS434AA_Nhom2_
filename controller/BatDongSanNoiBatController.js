@@ -8,6 +8,7 @@ exports.getBatDongSanNoiBat = async (req, res) => {
             where: { TrangThai: 1 }, // chỉ lấy chưa bán
             include: [
                 {
+                    
                     model: LichHen,
                     attributes: []
                 }

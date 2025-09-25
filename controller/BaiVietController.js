@@ -96,12 +96,38 @@ const layBaiVietDaDuyet = async (req, res) => {
     }
 };
 
-const layBaiChoDuyet = async (req, res) => {
+
+
+const duyetBaiViet = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const baiViet = await BaiViet.findByPk(id);
+        if (!baiViet) return res.status(404).json({ message: "Không tìm thấy bài viết" });
+
+        baiViet.TrangThai = 2;
+        baiViet.ngayDuyet = new Date();
+        await baiViet.save();
+
+        res.json({ message: "Bài viết đã được duyệt thành công", baiViet });
+    } catch (error) {
+        console.error("Lỗi duyệt bài viết:", error);
+        res.status(500).json({ message: "Lỗi khi duyệt bài viết" });
+    }
+    const layBaiChoDuyet = async (req, res) => {
     try {
         const baiChoDuyet = await BaiViet.findAll({
             where: { TrangThai: 1 },
             include: [
                 {
+
+
+
+
+
+
+
+
                     model: User,
                     as: "nguoiDang",
                     attributes: ["id", "username", "HoTen", "SoDienThoai"],
@@ -121,22 +147,18 @@ const layBaiChoDuyet = async (req, res) => {
     }
 };
 
-const duyetBaiViet = async (req, res) => {
-    try {
-        const { id } = req.params;
 
-        const baiViet = await BaiViet.findByPk(id);
-        if (!baiViet) return res.status(404).json({ message: "Không tìm thấy bài viết" });
 
-        baiViet.TrangThai = 2;
-        baiViet.ngayDuyet = new Date();
-        await baiViet.save();
 
-        res.json({ message: "Bài viết đã được duyệt thành công", baiViet });
-    } catch (error) {
-        console.error("Lỗi duyệt bài viết:", error);
-        res.status(500).json({ message: "Lỗi khi duyệt bài viết" });
-    }
+
+
+
+
+
+
+
+
+    
 };
 
 const tuChoiBaiViet = async (req, res) => {
