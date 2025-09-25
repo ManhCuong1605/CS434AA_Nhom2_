@@ -32,6 +32,51 @@ exports.datLichHen = async (req, res) => {
 };
 
 // Duyệt lịch hẹn
+
+// Hủy lịch hẹn
+exports.huyLichHen = async (req, res) => {
+    try {
+        const { id } = req.params;
+        // Lấy lịch hẹn kèm Khách hàng và User
+        const lichHen = await LichHen.findByPk(id, {
+            include: [
+                {
+                    model: KhachHang,
+                    include: [
+                        {
+                            model: User,
+                            attributes: ["HoTen", "email"]
+                        }
+                    ]
+                }
+            ]
+        });
+
+        if (!lichHen) return res.status(404).json({ message: "Không tìm thấy lịch hẹn" });
+        if (lichHen.TrangThai === 2) return res.status(400).json({ message: "Lịch hẹn này đã bị hủy trước đó" });
+
+        lichHen.TrangThai = 2;
+        await lichHen.save();
+
+        // Gửi email nếu có
+        if (lichHen.KhachHang?.User?.email) {
+            try {
+                await sendEmail(
+                    lichHen.KhachHang.User.email,
+                    "❌ Lịch hẹn của bạn đã bị hủy - BlackS City",
+                    getEmailHtmlHuy(lichHen.KhachHang.User.HoTen, formatDateTime(lichHen.NgayHen))
+                );
+            } catch (err) {
+                console.error("Gửi email thất bại:", err.message);
+            }
+        }
+
+        return res.json({ message: "Hủy lịch hẹn thành công", lichHen });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+};
+
 exports.duyetLichHen = async (req, res) => {
     try {
         const { id } = req.params;
@@ -81,50 +126,6 @@ exports.duyetLichHen = async (req, res) => {
 
         return res.json({ message: "Duyệt lịch thành công", lichHen });
 
-    } catch (error) {
-        return res.status(500).json({ message: error.message });
-    }
-};
-
-// Hủy lịch hẹn
-exports.huyLichHen = async (req, res) => {
-    try {
-        const { id } = req.params;
-        // Lấy lịch hẹn kèm Khách hàng và User
-        const lichHen = await LichHen.findByPk(id, {
-            include: [
-                {
-                    model: KhachHang,
-                    include: [
-                        {
-                            model: User,
-                            attributes: ["HoTen", "email"]
-                        }
-                    ]
-                }
-            ]
-        });
-
-        if (!lichHen) return res.status(404).json({ message: "Không tìm thấy lịch hẹn" });
-        if (lichHen.TrangThai === 2) return res.status(400).json({ message: "Lịch hẹn này đã bị hủy trước đó" });
-
-        lichHen.TrangThai = 2;
-        await lichHen.save();
-
-        // Gửi email nếu có
-        if (lichHen.KhachHang?.User?.email) {
-            try {
-                await sendEmail(
-                    lichHen.KhachHang.User.email,
-                    "❌ Lịch hẹn của bạn đã bị hủy - BlackS City",
-                    getEmailHtmlHuy(lichHen.KhachHang.User.HoTen, formatDateTime(lichHen.NgayHen))
-                );
-            } catch (err) {
-                console.error("Gửi email thất bại:", err.message);
-            }
-        }
-
-        return res.json({ message: "Hủy lịch hẹn thành công", lichHen });
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }
