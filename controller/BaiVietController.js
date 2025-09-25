@@ -33,14 +33,15 @@ const taoBaiViet = async (req, res) => {
             userId: req.user.id,
         });
 
-        if (uploadedFiles && uploadedFiles.length > 0) {
-            const hinhAnhData = uploadedFiles.map((file, index) => ({
-                url: file.path || file.secure_url,
-                baiVietId: baiViet.id,
-                position: index + 1,
-            }));
-            await HinhAnhBaiViet.bulkCreate(hinhAnhData);
-        }
+        // if (uploadedFiles && uploadedFiles.length > 0) {
+        //     const hinhAnhData = uploadedFiles.map((file, index) => ({
+        //         url: file.path || file.secure_url,
+        //         baiVietId: baiViet.id,
+        //         position: index + 1,
+        //     }));
+        //     await HinhAnhBaiViet.bulkCreate(hinhAnhData);
+        // }
+        
 
         const baiVietFull = await BaiViet.findByPk(baiViet.id, {
             include: {

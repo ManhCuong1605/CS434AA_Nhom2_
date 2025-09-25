@@ -9,7 +9,10 @@ const User = require("../models/User");
 
 router.get("/", verifyToken, checkRole(["ADMIN"]), paginate(User), userController.getAllUsers);
 router.get("/:id", verifyToken, checkRole(["ADMIN"]), userController.getUserById);
+// router.post("/addUser", verifyToken, checkRole(["ADMIN"]), userController.addUser);
+// router.put("/:id", verifyToken, checkRole(["ADMIN"]), userController.updateUser);
 router.post("/addUser", verifyToken, checkRole(["ADMIN"]), userController.addUser);
+
 router.put("/:id", verifyToken, checkRole(["ADMIN"]), userController.updateUser);
 
 module.exports = router;

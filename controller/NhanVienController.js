@@ -3,6 +3,18 @@ const User = require("../models/User")
 const VaiTro = require("../models/VaiTro");
 const UserVaiTro = require("../models/User_VaiTro");
 const bcrypt = require("bcrypt");
+// exports.getAllNhanVien = async (req, res) => {
+//     try {
+//         const nhanVien = await NhanVien.findAll({
+//             include: [{
+//                 model: User
+//             }]
+//         });
+//         res.json(nhanVien);
+//     } catch (error) {
+//         res.status(500).json({ error: "Lỗi khi lấy nhân viên" });
+//     }
+// };
 exports.getAllNhanVien = async (req, res) => {
     try {
         const nhanVien = await NhanVien.findAll({
@@ -30,7 +42,6 @@ exports.getNhanVienById = async (req, res) => {
             return res.status(404).json({ error: "Không tìm thấy nhân viên" });
         res.json(nhanVien);
     } catch (error) {
-        console.error("Lỗi lấy nhân viên theo id: ", error);
         res.status(500).json({ error: "Lỗi láy nhân viên theo id" });
     }
 }
@@ -91,6 +102,8 @@ exports.updateNhanVien = async (req, res) => {
         const nhanVien = await NhanVien.findByPk(id);
         if (!nhanVien) return res.status(404).json({ message: "Không tìm thấy nhân viên" });
 
+        // const user = await User.findByPk(nhanVien.User_id);
+        // if (!user) return res.status(404).json({ message: "Không tìm thấy người dùng tương ứng" });
         const user = await User.findByPk(nhanVien.User_id);
         if (!user) return res.status(404).json({ message: "Không tìm thấy người dùng tương ứng" });
 
@@ -137,6 +150,33 @@ exports.updateNhanVien = async (req, res) => {
         res.status(500).json({ message: "Lỗi server" });
     }
 };
+// exports.deleteNhanVien = async (req, res) => {
+//     try {
+//         const { id } = req.params;
+//         const nhanVien = await NhanVien.findByPk(id);
+//         if (!nhanVien) {
+//             return res.status(404).json({ error: "Không tìm thấy nhân viên" });
+//         }
+
+//         const userId = nhanVien.User_id;
+
+//         const user = await User.findByPk(userId);
+
+//         if (!user)
+//             return res.status(404).json({ error: "Không tìm thấy khách hàng" });
+//         if (user.TrangThai === 0) {
+//             return res.status(400).json({ error: "Nhân viên đã bị vô hiệu hóa trước đó" });
+//         }
+//         await user.update({ TrangThai: 0 });
+//         res.status(200).json({ message: "Xóa nhân viên (mềm) thành công!" });
+//     } catch (error) {
+//         console.error("Lỗi khi xóa nhân viên:", error);
+
+//         return res.status(500).json({ error: "Lỗi khi xóa nhân viên" });
+//     }
+// }
+
+
 exports.deleteNhanVien = async (req, res) => {
     try {
         const { id } = req.params;
